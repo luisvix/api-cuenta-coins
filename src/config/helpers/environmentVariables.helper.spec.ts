@@ -1,4 +1,4 @@
-import { loadConfigs } from './loadConfigs.helper';
+import { environmentVariables } from './environmentVariables.helper';
 
 describe('loadConfigsHelper', () => {
   it('should map values correctly', () => {
@@ -13,7 +13,7 @@ describe('loadConfigsHelper', () => {
     };
 
     process.env = mockEnv;
-    const result = loadConfigs();
+    const result = environmentVariables();
     expect(result).toMatchObject(expected);
     process.env = { ...originalEnv };
   });
