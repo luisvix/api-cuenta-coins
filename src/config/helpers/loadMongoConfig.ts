@@ -1,8 +1,7 @@
-import { ConfigType } from '@nestjs/config';
-import { environmentVariables } from './environmentVariables.helper';
+import { config } from './environmentVariables.helper';
 
-export const loadMongoConfig = (configs: ConfigType<typeof environmentVariables>) => {
-  const { user, pass, host, port, dbName } = configs.mongo;
+export const loadMongoConfig = () => {
+  const { user, pass, host, port, dbName } = config.mongo;
 
   return {
     uri: `mongodb://${host}:${port}`,
