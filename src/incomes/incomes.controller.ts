@@ -8,8 +8,8 @@ export class IncomesController {
   constructor(private readonly incomesService: IncomesService) {}
 
   @Post()
-  create(@Body() createIncomeDto: CreateIncomeDto) {
-    return this.incomesService.create(createIncomeDto);
+  create(@Body() income: CreateIncomeDto) {
+    return this.incomesService.create({ income });
   }
 
   @Get()
