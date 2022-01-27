@@ -6,13 +6,19 @@ jobs:
   deploy-to-docker-hub:
     runs-on: ubuntu-20.04
     steps:
+      - name: Cancel previous deploys
+        uses: styfle/cancel-workflow-action@0.9.1
+        with:
+          access_token: ${{ github.token }}
+
       - name: Login to DockerHub
         uses: docker/login-action@v1 
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
+
       - name: Build and push
         uses: docker/build-push-action@v2
         with:
           push: true
-          tags: luisvix/develop-cuenta-coins-repo:latest
+          tags: luisvix/develop-cuenta-coins:latest
