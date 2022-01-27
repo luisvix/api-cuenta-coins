@@ -1,0 +1,13 @@
+name: Deploy
+on: 
+  push:
+    branches: [ main ]
+jobs:
+  Explore-GitHub-Actions:
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Build and push
+        uses: docker/build-push-action@v2
+        with:
+          push: true
+          tags: luisvix/develop-cuenta-coins-repo:latest
