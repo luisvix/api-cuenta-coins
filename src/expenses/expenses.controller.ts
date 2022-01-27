@@ -1,20 +1,30 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Req, UseGuards } from '@nestjs/common';
 import { ExpensesService } from './expenses.service';
 import { CreateExpenseDto } from './dto/create-expense.dto';
 import { UpdateExpenseDto } from './dto/update-expense.dto';
+import { ApiTags } from '@nestjs/swagger';
+import { GoogleIdTokenGuard } from '../auth/guards/GoogleIdTokenGuard';
 
+@ApiTags('Expenses')
+@UseGuards(GoogleIdTokenGuard)
 @Controller('expenses')
 export class ExpensesController {
   constructor(private readonly expensesService: ExpensesService) {}
 
   @Post()
-  create(@Body() createExpenseDto: CreateExpenseDto) {
-    return this.expensesService.create(createExpenseDto);
+  create(@Body() expenseDto: CreateExpenseDto, @Req() req) {
+    const expense = {
+      ...expenseDto,
+      createdBy: req.user.providerId,
+    };
+
+    return this.expensesService.create({ expense });
   }
 
   @Get()
-  findAll() {
-    return this.expensesService.findAll();
+  async findAll(@Req() req) {
+    const expenses = await this.expensesService.findAll({ providerId: req.user.providerId });
+    return { expenses };
   }
 
   @Get(':id')
