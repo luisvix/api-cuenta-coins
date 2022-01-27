@@ -25,7 +25,7 @@ export class UsersService {
     if (id) filter._id = new ObjectId(id);
     const user = await this.UserModel.findOne(filter).exec();
     if (!user) {
-      throw new NotFoundException('User introduced is not found');
+      throw new NotFoundException('User introduced was not found');
     }
     return user;
   }
