@@ -1,9 +1,5 @@
 interface MongoConfig {
-  user?: string;
-  pass?: string;
-  dbName?: string;
-  host?: string;
-  port?: string;
+  url?: string;
 }
 
 interface CognitoConfig {
@@ -14,6 +10,7 @@ interface CognitoConfig {
 
 export interface Config {
   nodeEnv?: string;
+  port?: string | number;
   mongo?: MongoConfig;
   cognito?: CognitoConfig;
 }
