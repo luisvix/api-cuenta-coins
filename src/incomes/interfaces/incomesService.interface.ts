@@ -1,5 +1,9 @@
-import { CreateIncomeDto } from '../dto/create-income.dto';
+import { Income } from '../schemas/income.schema';
 
 export interface createIncomeParams {
-  income: CreateIncomeDto;
+  income: Income;
+}
+
+export interface findAllIncomesParams {
+  providerId: string;
 }

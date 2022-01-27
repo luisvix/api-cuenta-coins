@@ -1,19 +1,9 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
-import {
-  IsDate,
-  IsEnum,
-  IsNotEmpty,
-  IsNumber,
-  IsNumberString,
-  IsOptional,
-  IsPositive,
-  IsString,
-} from 'class-validator';
-import { PaymentMethods } from '../constants';
-import { Income } from '../schemas/income.schema';
+import { IsDate, IsEnum, IsNotEmpty, IsOptional, IsPositive, IsString } from 'class-validator';
+import { PaymentMethods } from '../../common/constants';
 
-export class CreateIncomeDto implements Income {
+export class CreateIncomeDto {
   @ApiProperty({ description: 'Details of the movement' })
   @IsString()
   @IsNotEmpty()

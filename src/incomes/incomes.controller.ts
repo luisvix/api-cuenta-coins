@@ -1,20 +1,30 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Req } from '@nestjs/common';
 import { IncomesService } from './incomes.service';
 import { CreateIncomeDto } from './dto/create-income.dto';
 import { UpdateIncomeDto } from './dto/update-income.dto';
+import { ApiTags } from '@nestjs/swagger';
+import { GoogleIdTokenGuard } from '../auth/guards/GoogleIdTokenGuard';
 
+@ApiTags('Incomes')
+@UseGuards(GoogleIdTokenGuard)
 @Controller('incomes')
 export class IncomesController {
   constructor(private readonly incomesService: IncomesService) {}
 
   @Post()
-  create(@Body() income: CreateIncomeDto) {
+  create(@Body() incomeDto: CreateIncomeDto, @Req() req) {
+    const income = {
+      ...incomeDto,
+      createdBy: req.user.providerId + '',
+    };
+
     return this.incomesService.create({ income });
   }
 
   @Get()
-  findAll() {
-    return this.incomesService.findAll();
+  async findAll(@Req() req) {
+    const incomes = await this.incomesService.findAll({ providerId: req.user.providerId });
+    return { incomes };
   }
 
   @Get(':id')

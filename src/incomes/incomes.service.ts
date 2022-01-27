@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { UpdateIncomeDto } from './dto/update-income.dto';
-import { createIncomeParams } from './interfaces/incomesService.interface';
+import { createIncomeParams, findAllIncomesParams } from './interfaces/incomesService.interface';
 import { Income, IncomeDocument } from './schemas/income.schema';
 
 @Injectable()
@@ -13,8 +13,8 @@ export class IncomesService {
     return this.IncomeModel.create(income);
   }
 
-  findAll() {
-    return `This action returns all incomes`;
+  findAll({ providerId }: findAllIncomesParams) {
+    return this.IncomeModel.find({ createdBy: providerId }).exec();
   }
 
   findOne(id: number) {
