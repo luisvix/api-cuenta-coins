@@ -3,14 +3,18 @@ on:
   push:
     branches: [ main ]
 jobs:
-  deploy-to-docker-hub:
+  canceling-previous-deploys:
     runs-on: ubuntu-20.04
     steps:
-      - name: Cancel previous deploys
+      - name: Cancelling
         uses: styfle/cancel-workflow-action@0.9.1
         with:
           access_token: ${{ github.token }}
 
+  deploy-to-docker-hub:
+    needs: [canceling-previous-deploys]
+    runs-on: ubuntu-20.04
+    steps:
       - name: Login to DockerHub
         uses: docker/login-action@v1 
         with:
@@ -24,8 +28,12 @@ jobs:
           tags: luisvix/develop-cuenta-coins:latest
 
   deploy-to-ecr:
+    needs: [canceling-previous-deploys]
     runs-on: ubuntu-20.04
     steps:
+      - name: Getting project
+        uses: actions/checkout@v2
+
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
