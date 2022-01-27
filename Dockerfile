@@ -1,15 +1,15 @@
-FROM node:16.13 as build
+FROM node:16.13 as building
 WORKDIR /container
-COPY package*.json .
+COPY package*.json ./
 RUN npm install
 COPY . .
-CMD npm run build
+RUN npm run build
 
 FROM node:16.13 
 
 WORKDIR /container
-COPY package.json .
+COPY package.json ./
 RUN npm install --only=production
-COPY --from=build /container/dist ./dist
+COPY --from=building /container/dist ./dist
 EXPOSE 80
 CMD node dist/src/main.js
