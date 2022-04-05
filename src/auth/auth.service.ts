@@ -5,7 +5,7 @@ import { UsersService } from '../users/users.service';
 export class AuthService {
   constructor(private usersService: UsersService) {}
 
-  async loginAndRegister({ user }) {
+  loginAndRegister({ user }) {
     return this.usersService.updateOrCreate({ user });
   }
 }
