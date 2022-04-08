@@ -1,7 +1,7 @@
 name: Deploy
 on: 
   push:
-    branches: [ main ]
+    branches: [ main, develop ]
 jobs:
   canceling-previous-deploys:
     runs-on: ubuntu-20.04
@@ -11,44 +11,34 @@ jobs:
         with:
           access_token: ${{ github.token }}
 
-  deploy-to-docker-hub:
-    needs: [canceling-previous-deploys]
+  build-and-deploy-to-google:
     runs-on: ubuntu-20.04
     steps:
-      - name: Login to DockerHub
-        uses: docker/login-action@v1 
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Google Auth
+        uses: google-github-actions/auth@v0
         with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
+          workload_identity_provider: ${{secrets.IDENTITY_PROVIDER}}
+          service_account: ${{secrets.GOOGLE_SERVICE_ACCOUNT}}
 
-      - name: Build and push
-        uses: docker/build-push-action@v2
-        with:
-          push: true
-          tags: luisvix/develop-cuenta-coins:latest
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v0
 
-  deploy-to-ecr:
-    needs: [canceling-previous-deploys]
-    runs-on: ubuntu-20.04
-    steps:
-      - name: Getting project
-        uses: actions/checkout@v2
+      - name: Authorize Docker push
+        run: gcloud auth configure-docker
 
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: us-east-1
-      - name: Login to Amazon ECR
-        id: login-ecr
-        uses: aws-actions/amazon-ecr-login@v1
-
-      - name: Build, tag, and push image to Amazon ECR
-        env:
-          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          ECR_REPOSITORY: develop-cuenta-coins
-          IMAGE_TAG: ${{ github.sha }}
-        run: |
-          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
-          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+      - name: Build and Push Container
+        run: |-
+          docker build -t gcr.io/${{ secrets.GOOGLE_PROJECT_ID }}/${{ secrets.GOOGLE_CLOUD_RUN_SERVICE }}:${{  github.sha }} .
+          docker push gcr.io/${{ secrets.GOOGLE_PROJECT_ID }}/${{ secrets.GOOGLE_CLOUD_RUN_SERVICE }}:${{  github.sha }}
+      
+      - name: Deploy to Cloud Run
+        run: |-
+          gcloud run deploy ${{ secrets.GOOGLE_CLOUD_RUN_SERVICE }} \
+            --region ${{ env.REGION }} \
+            --image gcr.io/${{ secrets.GOOGLE_PROJECT_ID }}/${{ secrets.GOOGLE_CLOUD_RUN_SERVICE }}:${{  github.sha }} \
+            --platform "managed" \
+            --quiet
+      
