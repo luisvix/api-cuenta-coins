@@ -29,21 +29,18 @@ jobs:
         with:
           workload_identity_provider: ${{ secrets.IDENTITY_PROVIDER }}
           service_account: ${{secrets.GOOGLE_SERVICE_ACCOUNT}}
-          token_format: 'access_token'
           
       - name: Set up Cloud SDK
         uses: google-github-actions/setup-gcloud@v0
 
       - name: Authorize Docker push
-        uses: 'docker/login-action@v1'
-        with:
-          registry: 'gcr.io' # or REGION-docker.pkg.dev
-          username: 'oauth2accesstoken'
-          password: '${{ steps.auth.outputs.access_token }}'
-      
-      - run: |-
-          echo '${{ steps.auth.outputs.access_token }}' | docker login -u oauth2accesstoken --password-stdin https://gcr.io
-      
+        run: gcloud auth configure-docker
+
+      - id: 'gcloud'
+        name: 'gcloud'
+        run: |-
+          gcloud secrets versions access "latest" --secret "my-secret"
+
       - name: Build and Push Container
         run: |-
           docker build -t gcr.io/${{ secrets.GOOGLE_PROJECT_ID }}/${{ secrets.GOOGLE_CLOUD_RUN_SERVICE }}:${{  github.sha }} .
