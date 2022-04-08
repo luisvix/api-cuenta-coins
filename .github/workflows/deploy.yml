@@ -23,7 +23,7 @@ jobs:
       - name: Google Auth
         uses: google-github-actions/auth@v0
         with:
-          workload_identity_provider: ${{secrets.IDENTITY_PROVIDER}}
+          workload_identity_provider: something-invalid
           service_account: ${{secrets.GOOGLE_SERVICE_ACCOUNT}}
 
       - name: Set up Cloud SDK
