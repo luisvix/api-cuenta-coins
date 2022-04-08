@@ -3,11 +3,6 @@ on:
   push:
     branches: [ main, develop ]
 
-env:
-  IDENTITY_PROVIDER: ${{ secrets.IDENTITY_PROVIDER }}
-  GOOGLE_SERVICE_ACCOUNT: ${{ secrets.GOOGLE_SERVICE_ACCOUNT }}
-  GOOGLE_PROJECT_ID: ${{ secrets.GOOGLE_PROJECT_ID }}
-  GOOGLE_CLOUD_RUN_SERVICE: ${{ secrets.GOOGLE_CLOUD_RUN_SERVICE }}
 jobs:
   canceling-previous-deploys:
     runs-on: ubuntu-20.04
