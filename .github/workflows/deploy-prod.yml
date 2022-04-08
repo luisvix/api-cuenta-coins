@@ -36,11 +36,6 @@ jobs:
       - name: Authorize Docker push
         run: gcloud auth configure-docker
 
-      - id: 'gcloud'
-        name: 'gcloud'
-        run: |-
-          gcloud secrets versions access "latest" --secret "my-secret"
-
       - name: Build and Push Container
         run: |-
           docker build -t gcr.io/${{ secrets.GCP_PROJECT }}/${{ secrets.GOOGLE_CLOUD_RUN_SERVICE }}:${{  github.sha }} .
