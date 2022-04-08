@@ -1,0 +1,51 @@
+name: Deploy develop
+on: 
+  push:
+    branches: [ develop ]
+
+jobs:
+  canceling-previous-deploys:
+    environment: develop
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Cancelling
+        uses: styfle/cancel-workflow-action@0.9.1
+        with:
+          access_token: ${{ github.token }}
+
+  build-and-deploy-to-google:
+    environment: develop
+    needs: [ canceling-previous-deploys ]
+    permissions:
+        contents: 'read'
+        id-token: 'write'
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Google Auth
+        uses: google-github-actions/auth@v0
+        with:
+          workload_identity_provider: ${{ env.IDENTITY_PROVIDER }}
+          service_account: ${{env.GOOGLE_SERVICE_ACCOUNT}}
+
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v0
+
+      - name: Authorize Docker push
+        run: gcloud auth configure-docker
+
+      - name: Build and Push Container
+        run: |-
+          docker build -t gcr.io/${{ env.GOOGLE_PROJECT_ID }}/${{ env.GOOGLE_CLOUD_RUN_SERVICE }}:${{  github.sha }} .
+          docker push gcr.io/${{ env.GOOGLE_PROJECT_ID }}/${{ env.GOOGLE_CLOUD_RUN_SERVICE }}:${{  github.sha }}
+      
+      - name: Deploy to Cloud Run
+        run: |-
+          gcloud run deploy ${{ env.GOOGLE_CLOUD_RUN_SERVICE }} \
+            --region ${{ env.REGION }} \
+            --image gcr.io/${{ env.GOOGLE_PROJECT_ID }}/${{ env.GOOGLE_CLOUD_RUN_SERVICE }}:${{  github.sha }} \
+            --platform "managed" \
+            --quiet
+      

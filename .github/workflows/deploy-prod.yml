@@ -1,10 +1,11 @@
-name: Deploy
+name: Deploy production
 on: 
   push:
-    branches: [ main, develop ]
+    branches: [ main ]
 
 jobs:
   canceling-previous-deploys:
+    environment: production
     runs-on: ubuntu-20.04
     steps:
       - name: Cancelling
@@ -13,6 +14,7 @@ jobs:
           access_token: ${{ github.token }}
 
   build-and-deploy-to-google:
+    environment: production
     needs: [ canceling-previous-deploys ]
     permissions:
         contents: 'read'
