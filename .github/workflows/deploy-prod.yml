@@ -40,10 +40,10 @@ jobs:
           registry: 'gcr.io' # or REGION-docker.pkg.dev
           username: 'oauth2accesstoken'
           password: '${{ steps.auth.outputs.access_token }}'
-        run: |-
+      
+      - run: |-
           echo '${{ steps.auth.outputs.access_token }}' | docker login -u oauth2accesstoken --password-stdin https://gcr.io
       
-
       - name: Build and Push Container
         run: |-
           docker build -t gcr.io/${{ secrets.GOOGLE_PROJECT_ID }}/${{ secrets.GOOGLE_CLOUD_RUN_SERVICE }}:${{  github.sha }} .
