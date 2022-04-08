@@ -12,6 +12,9 @@ jobs:
           access_token: ${{ github.token }}
 
   build-and-deploy-to-google:
+    permissions:
+        contents: 'read'
+        id-token: 'write'
     runs-on: ubuntu-20.04
     steps:
       - name: Checkout
