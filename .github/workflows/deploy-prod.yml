@@ -39,6 +39,7 @@ jobs:
       - name: Build and Push Container
         run: |-
           docker build -t gcr.io/${{ secrets.GOOGLE_PROJECT_ID }}/${{ secrets.GOOGLE_CLOUD_RUN_SERVICE }}:${{  github.sha }} .
+          gcloud auth configure-docker
           docker push gcr.io/${{ secrets.GOOGLE_PROJECT_ID }}/${{ secrets.GOOGLE_CLOUD_RUN_SERVICE }}:${{  github.sha }}
       
       - name: Deploy to Cloud Run
