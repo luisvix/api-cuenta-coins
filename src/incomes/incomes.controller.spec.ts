@@ -2,6 +2,8 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { IncomesController } from './incomes.controller';
 import { IncomesService } from './incomes.service';
 
+jest.mock('./incomes.service');
+
 describe('IncomesController', () => {
   let controller: IncomesController;
 

@@ -1,6 +1,6 @@
 import { Config } from '../interfaces/Config';
 
-export let config: Config = {};
+export let config: Config;
 
 const environments = {
   local: 'local',
@@ -22,6 +22,19 @@ export const loadConfig = async () => {
     },
     googleAuth: {
       clientId: GOOGLE_AUTH_CLIENT_ID,
+    },
+  };
+};
+
+export const loadTestConfig = async () => {
+  config = {
+    nodeEnv: 'test',
+    port: 81,
+    mongo: {
+      url: 'mongodb://localhost:27018',
+    },
+    googleAuth: {
+      clientId: 'test-client-id',
     },
   };
 };
