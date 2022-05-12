@@ -21,6 +21,7 @@ export class IncomesService {
     return `This action returns a #${id} income`;
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   update(id: number, updateIncomeDto: UpdateIncomeDto) {
     return `This action updates a #${id} income`;
   }
