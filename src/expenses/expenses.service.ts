@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { InjectConnection, InjectModel } from '@nestjs/mongoose';
-import { Connection, Model } from 'mongoose';
+import { InjectModel } from '@nestjs/mongoose';
+import { Model } from 'mongoose';
 import { Balance, BalanceDocument } from '../balances/schemas/balance.schema';
 import { UpdateExpenseDto } from './dto/update-expense.dto';
 import { createExpenseParams, findAllExpensesParams } from './interfaces/expensesService.interface';
@@ -11,29 +11,22 @@ export class ExpensesService {
   constructor(
     @InjectModel(Expense.name) private ExpenseModel: Model<ExpenseDocument>,
     @InjectModel(Balance.name) private BalanceModel: Model<BalanceDocument>,
-    @InjectConnection() private connection: Connection,
   ) {}
 
   async create({ expense }: createExpenseParams) {
-    const session = await this.connection.startSession();
-    let createdExpense;
+    const { createdBy: userId, operationDate = new Date(), amount } = expense;
+    const date = new Date(operationDate);
+    const year = date.getFullYear();
+    const month = date.getMonth() + 1;
 
-    session.withTransaction(async () => {
-      const { createdBy: userId, operationDate = new Date(), amount } = expense;
-      const date = new Date(operationDate);
-      const year = date.getFullYear();
-      const month = date.getMonth() + 1;
-      [createdExpense] = await Promise.all([
-        this.ExpenseModel.create([expense], { session }),
-        this.BalanceModel.updateOne(
-          { userId, year, month },
-          { $inc: { expenses: amount, balance: -amount } },
-          { session },
-        ),
-      ]);
-    });
-
-    session.endSession();
+    const [createdExpense] = await Promise.all([
+      this.ExpenseModel.create(expense),
+      this.BalanceModel.updateOne(
+        { userId, year, month },
+        { $inc: { expenses: amount, balance: -amount } },
+        { upsert: true },
+      ),
+    ]);
 
     return createdExpense;
   }
