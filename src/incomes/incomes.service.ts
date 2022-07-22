@@ -18,10 +18,11 @@ export class IncomesService {
     const session = await this.connection.startSession();
     let createdIncome;
 
-    session.withTransaction(async () => {
-      const { createdBy: userId, operationDate, amount } = income;
-      const year = operationDate.getFullYear();
-      const month = operationDate.getMonth() + 1;
+    await session.withTransaction(async () => {
+      const { createdBy: userId, operationDate = new Date(), amount } = income;
+      const date = new Date(operationDate);
+      const year = date.getFullYear();
+      const month = date.getMonth() + 1;
       [createdIncome] = await Promise.all([
         this.IncomeModel.create([income], { session }),
         this.BalanceModel.updateOne(

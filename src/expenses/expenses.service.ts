@@ -19,9 +19,10 @@ export class ExpensesService {
     let createdExpense;
 
     session.withTransaction(async () => {
-      const { createdBy: userId, operationDate, amount } = expense;
-      const year = operationDate.getFullYear();
-      const month = operationDate.getMonth() + 1;
+      const { createdBy: userId, operationDate = new Date(), amount } = expense;
+      const date = new Date(operationDate);
+      const year = date.getFullYear();
+      const month = date.getMonth() + 1;
       [createdExpense] = await Promise.all([
         this.ExpenseModel.create([expense], { session }),
         this.BalanceModel.updateOne(
