@@ -1,6 +1,6 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
-import { IsDate, IsEnum, IsNotEmpty, IsOptional, IsPositive, IsString } from 'class-validator';
+import { IsEnum, IsNotEmpty, IsOptional, IsPositive, IsString } from 'class-validator';
 import { PaymentMethods } from '../../common/constants';
 
 export class CreateIncomeDto {
@@ -19,12 +19,12 @@ export class CreateIncomeDto {
   @IsNotEmpty()
   paymentMethod: PaymentMethods;
 
-  @ApiProperty({ description: 'Used to classify operations' })
+  @ApiPropertyOptional({ description: 'Used to classify operations' })
   @IsOptional()
   @IsNotEmpty()
   category?: string;
 
-  @ApiProperty({ description: "Operation's date", type: Date, default: 'Current date' })
-  @IsDate()
+  @ApiPropertyOptional({ description: "Operation's date", type: Date, default: 'Current date' })
+  @IsOptional()
   operationDate?: Date = new Date();
 }
