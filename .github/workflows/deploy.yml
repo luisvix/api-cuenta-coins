@@ -10,6 +10,7 @@ concurrency:
 jobs:
   build-and-deploy-to-google:
     name: 🚀 Deploy to ${{github.ref_name}}
+    environment: develop
     permissions:
       contents: 'read'
       id-token: 'write'
