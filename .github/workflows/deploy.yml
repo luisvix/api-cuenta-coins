@@ -24,7 +24,7 @@ jobs:
           fi
 
   build-and-deploy-to-google:
-    name: 🚀 Deploy to ${{github.ref_name}}
+    name: 🚀 Deploy to ${{github.ref_name}} ${{github.env.GITHUB_ENVIRONMENT}}
     needs: set-environment
     environment: ${{ github.env.GITHUB_ENVIRONMENT }}
     permissions:
