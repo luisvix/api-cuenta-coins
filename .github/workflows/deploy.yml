@@ -9,7 +9,7 @@ concurrency:
 
 jobs:
   build-and-deploy-to-google:
-    name: ✈️ Deploy to ${{github.head_ref}}
+    name: 🚀 Deploy to ${{github.ref}}
     environment: develop
     permissions:
       contents: 'read'
