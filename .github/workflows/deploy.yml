@@ -1,7 +1,7 @@
 name: Deploy develop
 on:
   push:
-    branches: [develop]
+    branches: [develop, main]
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -9,7 +9,7 @@ concurrency:
 
 jobs:
   build-and-deploy-to-google:
-    name: Deploy to develop
+    name: ✈️ Deploy to ${{github.head_ref}}
     environment: develop
     permissions:
       contents: 'read'
@@ -39,6 +39,3 @@ jobs:
         with:
           service: ${{ secrets.GOOGLE_CLOUD_RUN_SERVICE }}
           image: 'gcr.io/${{ secrets.GCP_PROJECT }}/${{ secrets.GOOGLE_CLOUD_RUN_SERVICE }}:${{ github.sha }}'
-
-      - name: 📝 Log outputs
-        run: 'curl "${{ steps.deploy.outputs.url }}"'
