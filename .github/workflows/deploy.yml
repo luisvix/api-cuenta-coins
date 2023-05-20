@@ -11,22 +11,25 @@ jobs:
   set-environment:
     name: 🚀 Set Environment
     runs-on: ubuntu-22.04
+    outputs:
+      github-environment: ${{ steps.set-environment.outputs.environment }}
     steps:
       - name: ⬇️ Checkout
         uses: actions/checkout@v3
 
-      - name: 📝 Set Environment
+      - id: set-environment
+        name: 📝 Set Environment
         run: |
           if [[ "${{ github.ref_name }}" == "main" ]]; then
-            echo "GITHUB_ENVIRONMENT=production" >> $GITHUB_ENV
+            echo "environment=production" >> $GITHUB_OUTPUT
           else
-            echo "GITHUB_ENVIRONMENT=develop" >> $GITHUB_ENV
+            echo "environment=develop" >> $GITHUB_OUTPUT
           fi
 
   build-and-deploy-to-google:
-    name: 🚀 Deploy to ${{github.ref_name}} ${{env.GITHUB_ENVIRONMENT}}
+    name: 🚀 Deploy to ${{github.ref_name}}
     needs: set-environment
-    environment: ${{ env.GITHUB_ENVIRONMENT }}
+    environment: ${{ needs.set-environment.outputs.github-environment }}
     permissions:
       contents: 'read'
       id-token: 'write'
