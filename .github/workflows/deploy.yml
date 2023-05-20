@@ -10,7 +10,6 @@ concurrency:
 jobs:
   build-and-deploy-to-google:
     name: 🚀 Deploy to ${{github.ref_name}}
-    environment: if[${{github.ref_name}} = "main"] then return "develop" else return "main" fi
     permissions:
       contents: 'read'
       id-token: 'write'
