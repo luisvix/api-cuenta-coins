@@ -9,13 +9,14 @@ concurrency:
 
 jobs:
   build-and-deploy-to-google:
+    name: Deploy to develop
     environment: develop
     permissions:
       contents: 'read'
       id-token: 'write'
     runs-on: ubuntu-22.04
     steps:
-      - name: Checkout
+      - name: ⬇️ Checkout
         uses: actions/checkout@v3
 
       - id: 'auth'
@@ -24,6 +25,11 @@ jobs:
         with:
           credentials_json: '${{ secrets.GCP_CREDENTIALS }}'
 
+      - name: 🏗️ Build and 🐳 Push Container
+        run: |-
+          docker build -t gcr.io/${{ secrets.GCP_PROJECT }}/${{ secrets.GOOGLE_CLOUD_RUN_SERVICE }}:${{  github.sha }} .
+          docker push gcr.io/${{ secrets.GCP_PROJECT }}/${{ secrets.GOOGLE_CLOUD_RUN_SERVICE }}:${{  github.sha }}
+
       - id: 'deploy'
         name: 🚀 Deploy to Cloud Run
         uses: google-github-actions/deploy-cloudrun@v1
@@ -31,5 +37,5 @@ jobs:
           service: ${{ secrets.GOOGLE_CLOUD_RUN_SERVICE }}
           image: 'gcr.io/${{ secrets.GCP_PROJECT }}/${{ secrets.GOOGLE_CLOUD_RUN_SERVICE }}:${{ github.sha }}'
 
-      - name: 'Use output'
+      - name: 📝 Log outputs
         run: 'curl "${{ steps.deploy.outputs.url }}"'
