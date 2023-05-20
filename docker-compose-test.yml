@@ -2,6 +2,6 @@ version: '3.9'
 
 services:
   databaseMongoTest:
-    image: mongo:5.0
+    image: mongo:6.0.5
     ports:
       - 27018:27017

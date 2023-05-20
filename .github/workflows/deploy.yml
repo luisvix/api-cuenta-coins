@@ -1,0 +1,41 @@
+name: Deploy develop
+on:
+  push:
+    branches: [develop, main]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-and-deploy-to-google:
+    name: 🚀 Deploy to ${{github.ref}}
+    environment: develop
+    permissions:
+      contents: 'read'
+      id-token: 'write'
+    runs-on: ubuntu-22.04
+    steps:
+      - name: ⬇️ Checkout
+        uses: actions/checkout@v3
+
+      - id: 'auth'
+        name: 🪪 Google Auth
+        uses: google-github-actions/auth@v1
+        with:
+          credentials_json: '${{ secrets.GCP_CREDENTIALS }}'
+
+      - name: 🔑 Authorize Docker push
+        run: gcloud auth configure-docker
+
+      - name: 🏗️ Build and 🐳 Push Container
+        run: |-
+          docker build -t gcr.io/${{ secrets.GCP_PROJECT }}/${{ secrets.GOOGLE_CLOUD_RUN_SERVICE }}:${{  github.sha }} .
+          docker push gcr.io/${{ secrets.GCP_PROJECT }}/${{ secrets.GOOGLE_CLOUD_RUN_SERVICE }}:${{  github.sha }}
+
+      - id: 'deploy'
+        name: 🚀 Deploy to Cloud Run
+        uses: google-github-actions/deploy-cloudrun@v1
+        with:
+          service: ${{ secrets.GOOGLE_CLOUD_RUN_SERVICE }}
+          image: 'gcr.io/${{ secrets.GCP_PROJECT }}/${{ secrets.GOOGLE_CLOUD_RUN_SERVICE }}:${{ github.sha }}'
