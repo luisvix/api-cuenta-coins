@@ -30,6 +30,9 @@ jobs:
           docker build -t gcr.io/${{ secrets.GCP_PROJECT }}/${{ secrets.GOOGLE_CLOUD_RUN_SERVICE }}:${{  github.sha }} .
           docker push gcr.io/${{ secrets.GCP_PROJECT }}/${{ secrets.GOOGLE_CLOUD_RUN_SERVICE }}:${{  github.sha }}
 
+      - name: 🔑 Authorize Docker push
+        run: gcloud auth configure-docker
+
       - id: 'deploy'
         name: 🚀 Deploy to Cloud Run
         uses: google-github-actions/deploy-cloudrun@v1
