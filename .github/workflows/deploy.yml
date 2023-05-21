@@ -8,9 +8,28 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  set-environment:
+    name: 🚀 Set Environment
+    runs-on: ubuntu-22.04
+    outputs:
+      github-environment: ${{ steps.set-environment.outputs.environment }}
+    steps:
+      - name: ⬇️ Checkout
+        uses: actions/checkout@v3
+
+      - id: set-environment
+        name: 📝 Set Environment
+        run: |
+          if [[ "${{ github.ref_name }}" == "main" ]]; then
+            echo "environment=production" >> $GITHUB_OUTPUT
+          else
+            echo "environment=develop" >> $GITHUB_OUTPUT
+          fi
+
   build-and-deploy-to-google:
     name: 🚀 Deploy to ${{github.ref_name}}
-    environment: develop
+    needs: set-environment
+    environment: ${{ needs.set-environment.outputs.github-environment }}
     permissions:
       contents: 'read'
       id-token: 'write'
