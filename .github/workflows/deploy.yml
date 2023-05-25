@@ -9,7 +9,7 @@ concurrency:
 
 jobs:
   set-environment:
-    name: 🚀 Set Environment
+    name: 🔨 Set Environment
     runs-on: ubuntu-22.04
     outputs:
       github-environment: ${{ steps.set-environment.outputs.environment }}
