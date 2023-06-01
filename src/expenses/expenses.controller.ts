@@ -1,9 +1,22 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Req, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  Req,
+  UseGuards,
+  Query,
+} from '@nestjs/common';
 import { ExpensesService } from './expenses.service';
 import { CreateExpenseDto } from './dto/create-expense.dto';
 import { UpdateExpenseDto } from './dto/update-expense.dto';
 import { ApiTags } from '@nestjs/swagger';
 import { GoogleIdTokenGuard } from '../auth/guards/GoogleIdTokenGuard';
+import { FilterYearMonthDto } from '../common/dtos/filter-year-month.dto';
+import { UserId } from '../common/decorators/user.decorator';
 
 @ApiTags('Expenses')
 @UseGuards(GoogleIdTokenGuard)
@@ -22,8 +35,12 @@ export class ExpensesController {
   }
 
   @Get()
-  async findAll(@Req() req) {
-    const expenses = await this.expensesService.findAll({ providerId: req.user.providerId });
+  async findAll(@UserId() userId, @Query() { filterMonth, filterYear }: FilterYearMonthDto) {
+    const expenses = await this.expensesService.findAll({
+      userId,
+      filter: { month: filterMonth, year: filterYear },
+    });
+
     return { expenses };
   }
 

@@ -1,10 +1,21 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  UseGuards,
+  Query,
+} from '@nestjs/common';
 import { IncomesService } from './incomes.service';
 import { CreateIncomeDto } from './dto/create-income.dto';
 import { UpdateIncomeDto } from './dto/update-income.dto';
 import { ApiTags } from '@nestjs/swagger';
 import { GoogleIdTokenGuard } from '../auth/guards/GoogleIdTokenGuard';
 import { UserId } from '../common/decorators/user.decorator';
+import { FilterYearMonthDto } from '../common/dtos/filter-year-month.dto';
 
 @ApiTags('Incomes')
 @UseGuards(GoogleIdTokenGuard)
@@ -23,8 +34,11 @@ export class IncomesController {
   }
 
   @Get()
-  async findAll(@UserId() userId) {
-    const incomes = await this.incomesService.findAll({ providerId: userId });
+  async findAll(@UserId() userId, @Query() { filterMonth, filterYear }: FilterYearMonthDto) {
+    const incomes = await this.incomesService.findAll({
+      userId,
+      filter: { month: filterMonth, year: filterYear },
+    });
     return { incomes };
   }
 

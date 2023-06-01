@@ -12,5 +12,6 @@ import { Balance, BalanceSchema } from '../balances/schemas/balance.schema';
   ],
   controllers: [IncomesController],
   providers: [IncomesService],
+  exports: [IncomesService],
 })
 export class IncomesModule {}
