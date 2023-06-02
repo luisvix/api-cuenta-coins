@@ -29,10 +29,19 @@ export class BalancesController {
     @Param('month') month: number,
     @UserId() userId,
   ) {
-    const [incomes, expenses] = await Promise.all([
+    const [incomes, expenses, balances] = await Promise.all([
       this.incomesService.findAll({ userId, filter: { year, month } }),
       this.expensesService.findAll({ userId, filter: { year, month } }),
+      await this.balancesService.getBalance({ userId, year, month }),
     ]);
-    return { incomes, expenses };
+
+    incomes.forEach((income) => (income.type = 'income'));
+    expenses.forEach((expense) => (expense.type = 'expense'));
+
+    const movements = [...incomes, ...expenses].sort((a, b) => {
+      return new Date(a.operationDate).getTime() - new Date(b.operationDate).getTime();
+    });
+
+    return { balance: balances[0], movements };
   }
 }
