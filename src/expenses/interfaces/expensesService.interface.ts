@@ -4,6 +4,11 @@ export interface createExpenseParams {
   expense: Expense;
 }
 
+export interface findAllFilter {
+  month?: number;
+  year?: number;
+}
 export interface findAllExpensesParams {
-  providerId: string;
+  userId: string;
+  filter?: findAllFilter;
 }

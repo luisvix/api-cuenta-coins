@@ -3,3 +3,9 @@ export interface listBalancesParams {
   limit?: number;
   offset?: number;
 }
+
+export interface getBalanceParams {
+  userId: string;
+  month?: number;
+  year?: number;
+}

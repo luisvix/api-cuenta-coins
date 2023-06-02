@@ -31,8 +31,38 @@ export class ExpensesService {
     return createdExpense;
   }
 
-  findAll({ providerId }: findAllExpensesParams) {
-    return this.ExpenseModel.find({ createdBy: providerId }).exec();
+  findAll({ userId, filter }: findAllExpensesParams) {
+    return this.ExpenseModel.aggregate([
+      {
+        $project: {
+          _id: true,
+          description: true,
+          amount: true,
+          paymentMethod: true,
+          category: true,
+          operationDate: true,
+          createdBy: true,
+          month: {
+            $month: '$operationDate',
+          },
+          year: {
+            $year: '$operationDate',
+          },
+        },
+      },
+      {
+        $match: {
+          createdBy: userId,
+          month: filter.month,
+          year: filter.year,
+        },
+      },
+      {
+        $sort: {
+          operationDate: -1,
+        },
+      },
+    ]).exec();
   }
 
   findOne(id: number) {

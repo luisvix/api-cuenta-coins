@@ -15,7 +15,9 @@ import { loadConfig, config } from './config/helpers/environmentVariables.helper
   );
 
   app.enableCors();
-  app.useGlobalPipes(new ValidationPipe());
+  app.useGlobalPipes(
+    new ValidationPipe({ transform: true, transformOptions: { enableImplicitConversion: true } }),
+  );
 
   const documentation = new DocumentBuilder()
     .setTitle('Finanzas personales')

@@ -31,8 +31,38 @@ export class IncomesService {
     return createdIncome;
   }
 
-  findAll({ providerId }: findAllIncomesParams) {
-    return this.IncomeModel.find({ createdBy: providerId }).exec();
+  findAll({ userId, filter }: findAllIncomesParams) {
+    return this.IncomeModel.aggregate([
+      {
+        $project: {
+          _id: true,
+          description: true,
+          amount: true,
+          paymentMethod: true,
+          category: true,
+          operationDate: true,
+          createdBy: true,
+          month: {
+            $month: '$operationDate',
+          },
+          year: {
+            $year: '$operationDate',
+          },
+        },
+      },
+      {
+        $match: {
+          createdBy: userId,
+          month: filter.month,
+          year: filter.year,
+        },
+      },
+      {
+        $sort: {
+          operationDate: -1,
+        },
+      },
+    ]).exec();
   }
 
   findOne(id: number) {

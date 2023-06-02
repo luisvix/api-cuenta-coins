@@ -1,3 +1,4 @@
+import { findAllFilter } from '../../expenses/interfaces/expensesService.interface';
 import { Income } from '../schemas/income.schema';
 
 export interface createIncomeParams {
@@ -5,5 +6,6 @@ export interface createIncomeParams {
 }
 
 export interface findAllIncomesParams {
-  providerId: string;
+  userId: string;
+  filter?: findAllFilter;
 }
