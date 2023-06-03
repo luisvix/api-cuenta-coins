@@ -9,7 +9,11 @@ export class BalancesService {
   constructor(@InjectModel(Balance.name) private BalanceModel: Model<BalanceDocument>) {}
 
   listBalances({ userId, limit = 10, offset = 0 }: listBalancesParams) {
-    return this.BalanceModel.find({ userId }).skip(offset).limit(limit).exec();
+    return this.BalanceModel.find({ userId })
+      .sort({ year: -1, month: -1 })
+      .skip(offset)
+      .limit(limit)
+      .exec();
   }
 
   getBalance({ userId, month, year }: getBalanceParams) {
