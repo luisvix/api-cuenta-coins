@@ -1,10 +1,16 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
+import { DateTime } from 'luxon';
 import { Balance, BalanceDocument } from '../balances/schemas/balance.schema';
 import { UpdateIncomeDto } from './dto/update-income.dto';
-import { createIncomeParams, findAllIncomesParams } from './interfaces/incomesService.interface';
+import {
+  createIncomeParams,
+  createManyIncomesParams,
+  findAllIncomesParams,
+} from './interfaces/incomesService.interface';
 import { Income, IncomeDocument } from './schemas/income.schema';
+import { FrequencyOfMovements } from '../common/constants';
 
 @Injectable()
 export class IncomesService {
@@ -18,6 +24,7 @@ export class IncomesService {
     const date = new Date(operationDate);
     const year = date.getFullYear();
     const month = date.getMonth() + 1;
+    console.log('year', year);
 
     const [createdIncome] = await Promise.all([
       this.IncomeModel.create(income),
@@ -29,6 +36,51 @@ export class IncomesService {
     ]);
 
     return createdIncome;
+  }
+
+  async createMany({ income, frequency, numberOfMovements }: createManyIncomesParams) {
+    const { createdBy: userId, operationDate = new Date(), amount } = income;
+    const date = DateTime.fromJSDate(new Date(operationDate));
+    const auxAmount = amount / numberOfMovements;
+    let newDate;
+    const incomes = [];
+    const operations = [];
+
+    Array.from({ length: numberOfMovements }).forEach((_, index) => {
+      if (frequency === FrequencyOfMovements.monthly) {
+        newDate = date.plus({ months: index });
+      } else if (frequency === FrequencyOfMovements.weekly) {
+        newDate = date.plus({ weeks: index });
+      } else if (frequency === FrequencyOfMovements.biweekly) {
+        newDate = date.plus({ weeks: index * 2 });
+      } else if (frequency === FrequencyOfMovements.yearly) {
+        newDate = date.plus({ years: index });
+      }
+
+      incomes.push({
+        ...income,
+        description: `${income.description} ${index + 1} de ${numberOfMovements}`,
+        operationDate: newDate.toISO(),
+        amount: auxAmount,
+      });
+
+      operations.push({
+        updateOne: {
+          filter: {
+            userId,
+            year: newDate.year,
+            month: newDate.month,
+          },
+          update: { $inc: { incomes: auxAmount, balance: auxAmount } },
+          upsert: true,
+        },
+      });
+    });
+
+    await Promise.all([
+      this.IncomeModel.insertMany(incomes),
+      this.BalanceModel.bulkWrite(operations),
+    ]);
   }
 
   findAll({ userId, filter }: findAllIncomesParams) {

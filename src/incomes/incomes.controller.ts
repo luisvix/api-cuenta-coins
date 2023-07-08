@@ -25,12 +25,17 @@ export class IncomesController {
 
   @Post()
   create(@Body() incomeDto: CreateIncomeDto, @UserId() userId) {
-    const income = {
-      ...incomeDto,
-      createdBy: userId,
-    };
+    const { frequency, numberOfMovements, ...income } = incomeDto;
 
-    return this.incomesService.create({ income });
+    if (frequency && numberOfMovements) {
+      return this.incomesService.createMany({
+        income: { ...income, createdBy: userId },
+        frequency,
+        numberOfMovements,
+      });
+    }
+
+    return this.incomesService.create({ income: { ...income, createdBy: userId } });
   }
 
   @Get()

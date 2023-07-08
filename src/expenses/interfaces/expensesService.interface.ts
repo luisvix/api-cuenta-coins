@@ -1,3 +1,4 @@
+import { FrequencyOfMovements } from '../../common/constants';
 import { Expense } from '../schemas/expense.schema';
 
 export interface createExpenseParams {
@@ -11,4 +12,10 @@ export interface findAllFilter {
 export interface findAllExpensesParams {
   userId: string;
   filter?: findAllFilter;
+}
+
+export interface createManyExpensesParams {
+  expense: Expense;
+  frequency: FrequencyOfMovements;
+  numberOfMovements: number;
 }
