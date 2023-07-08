@@ -6,7 +6,6 @@ import {
   Patch,
   Param,
   Delete,
-  Req,
   UseGuards,
   Query,
 } from '@nestjs/common';
@@ -25,13 +24,18 @@ export class ExpensesController {
   constructor(private readonly expensesService: ExpensesService) {}
 
   @Post()
-  create(@Body() expenseDto: CreateExpenseDto, @Req() req) {
-    const expense = {
-      ...expenseDto,
-      createdBy: req.user.providerId,
-    };
+  create(@Body() expenseDto: CreateExpenseDto, @UserId() userId) {
+    const { frequency, numberOfMovements, ...expense } = expenseDto;
 
-    return this.expensesService.create({ expense });
+    if (frequency && numberOfMovements > 1) {
+      return this.expensesService.createMany({
+        expense: { ...expense, createdBy: userId },
+        frequency,
+        numberOfMovements,
+      });
+    }
+
+    return this.expensesService.create({ expense: { ...expense, createdBy: userId } });
   }
 
   @Get()
