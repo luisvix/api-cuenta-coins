@@ -77,10 +77,12 @@ export class ExpensesService {
       });
     });
 
-    await Promise.all([
+    const [createdExpenses] = await Promise.all([
       this.ExpenseModel.insertMany(expenses),
       this.BalanceModel.bulkWrite(operations),
     ]);
+
+    return createdExpenses[0];
   }
 
   findAll({ userId, filter }: findAllExpensesParams) {

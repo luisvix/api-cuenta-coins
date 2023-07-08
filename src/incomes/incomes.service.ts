@@ -77,10 +77,12 @@ export class IncomesService {
       });
     });
 
-    await Promise.all([
+    const [createdIncomes] = await Promise.all([
       this.IncomeModel.insertMany(incomes),
       this.BalanceModel.bulkWrite(operations),
     ]);
+
+    return createdIncomes[0];
   }
 
   findAll({ userId, filter }: findAllIncomesParams) {
