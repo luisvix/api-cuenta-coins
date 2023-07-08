@@ -27,7 +27,7 @@ export class IncomesController {
   create(@Body() incomeDto: CreateIncomeDto, @UserId() userId) {
     const { frequency, numberOfMovements, ...income } = incomeDto;
 
-    if (frequency && numberOfMovements) {
+    if (frequency && numberOfMovements > 1) {
       return this.incomesService.createMany({
         income: { ...income, createdBy: userId },
         frequency,

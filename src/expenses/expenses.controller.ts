@@ -27,7 +27,7 @@ export class ExpensesController {
   create(@Body() expenseDto: CreateExpenseDto, @UserId() userId) {
     const { frequency, numberOfMovements, ...expense } = expenseDto;
 
-    if (frequency && numberOfMovements) {
+    if (frequency && numberOfMovements > 1) {
       return this.expensesService.createMany({
         expense: { ...expense, createdBy: userId },
         frequency,
