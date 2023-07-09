@@ -3,14 +3,14 @@ import { IsNumber, IsOptional, IsPositive, Min } from 'class-validator';
 
 export class QueryPaginationDto {
   @ApiPropertyOptional({ type: Number, default: 0 })
+  @IsOptional()
   @IsNumber()
   @Min(0)
-  @IsOptional()
-  offset? = 0;
+  offset?: number = 0;
 
   @ApiPropertyOptional({ type: Number, default: 10 })
-  @IsNumber()
   @IsOptional()
+  @IsNumber()
   @IsPositive()
-  limit? = 10;
+  limit?: number = 10;
 }
