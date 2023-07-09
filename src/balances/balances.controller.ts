@@ -18,7 +18,7 @@ export class BalancesController {
   ) {}
 
   @Get()
-  async listBalances(@Query() { limit, offset }: QueryPaginationDto, @UserId() userId) {
+  async listBalances(@Query() { limit = 10, offset = 0 }: QueryPaginationDto, @UserId() userId) {
     const balances = await this.balancesService.listBalances({ userId, limit, offset });
     return { balances };
   }
