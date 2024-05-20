@@ -1,24 +1,12 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Patch,
-  Param,
-  Delete,
-  UseGuards,
-  Query,
-} from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestjs/common';
 import { IncomesService } from './incomes.service';
 import { CreateIncomeDto } from './dto/create-income.dto';
 import { UpdateIncomeDto } from './dto/update-income.dto';
 import { ApiTags } from '@nestjs/swagger';
-import { GoogleIdTokenGuard } from '../auth/guards/GoogleIdTokenGuard';
 import { UserId } from '../common/decorators/user.decorator';
 import { FilterYearMonthDto } from '../common/dtos/filter-year-month.dto';
 
 @ApiTags('Incomes')
-@UseGuards(GoogleIdTokenGuard)
 @Controller('incomes')
 export class IncomesController {
   constructor(private readonly incomesService: IncomesService) {}

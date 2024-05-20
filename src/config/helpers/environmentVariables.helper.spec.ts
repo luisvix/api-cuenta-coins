@@ -8,7 +8,6 @@ describe('enviromentVariables.helper', () => {
       const mockEnv = {
         NODE_ENV: 'test env value',
         MONGO_URL: 'test mongo url',
-        GOOGLE_AUTH_CLIENT_ID: 'test google auth client id',
         PORT: '1000',
       };
 
@@ -17,9 +16,6 @@ describe('enviromentVariables.helper', () => {
         port: mockEnv.PORT,
         mongo: {
           url: mockEnv.MONGO_URL,
-        },
-        googleAuth: {
-          clientId: mockEnv.GOOGLE_AUTH_CLIENT_ID,
         },
       };
 
@@ -37,9 +33,6 @@ describe('enviromentVariables.helper', () => {
         port: 81,
         mongo: {
           url: 'mongodb://localhost:27018',
-        },
-        googleAuth: {
-          clientId: 'test-client-id',
         },
       };
 

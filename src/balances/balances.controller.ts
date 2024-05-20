@@ -1,6 +1,5 @@
-import { Controller, Get, Param, Query, UseGuards } from '@nestjs/common';
+import { Controller, Get, Param, Query } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
-import { GoogleIdTokenGuard } from '../auth/guards/GoogleIdTokenGuard';
 import { UserId } from '../common/decorators/user.decorator';
 import { QueryPaginationDto } from '../common/dtos/query-pagination.dto';
 import { BalancesService } from './balances.service';
@@ -8,7 +7,6 @@ import { IncomesService } from '../incomes/incomes.service';
 import { ExpensesService } from '../expenses/expenses.service';
 
 @ApiTags('Balances')
-@UseGuards(GoogleIdTokenGuard)
 @Controller('balances')
 export class BalancesController {
   constructor(

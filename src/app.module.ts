@@ -4,7 +4,6 @@ import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { MongooseModule } from '@nestjs/mongoose';
-import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
 import { IncomesModule } from './incomes/incomes.module';
 import { ExpensesModule } from './expenses/expenses.module';
@@ -16,7 +15,6 @@ import { BalancesModule } from './balances/balances.module';
     MongooseModule.forRootAsync({
       useFactory: loadMongoConfig,
     }),
-    AuthModule,
     UsersModule,
     IncomesModule,
     ExpensesModule,
