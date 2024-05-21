@@ -15,6 +15,10 @@ export class Expense {
   @Prop() category?: string;
 
   @Prop({ type: Date, default: new Date() }) operationDate?: Date = new Date();
+
+  @Prop() numberOfMovement?: number;
+
+  @Prop() totalOfMovements?: number;
 }
 
 export const ExpenseSchema = SchemaFactory.createForClass(Expense);

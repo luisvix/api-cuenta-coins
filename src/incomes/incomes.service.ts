@@ -59,9 +59,10 @@ export class IncomesService {
 
       incomes.push({
         ...income,
-        description: `${income.description} ${index + 1} de ${numberOfMovements}`,
         operationDate: newDate.toISO(),
         amount: auxAmount,
+        numberOfMovement: index + 1,
+        totalOfMovements: numberOfMovements,
       });
 
       operations.push({
