@@ -13,6 +13,10 @@ export class Income {
   @Prop({ required: true }) createdBy: string;
   @Prop() category?: string;
   @Prop({ type: Date, default: new Date() }) operationDate?: Date = new Date();
+
+  @Prop() numberOfMovement?: number;
+
+  @Prop() totalOfMovements?: number;
 }
 
 export const IncomeSchema = SchemaFactory.createForClass(Income);

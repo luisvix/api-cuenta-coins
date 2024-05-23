@@ -1,11 +1,11 @@
-FROM node:18.16.1 as building
+FROM node:20.12.2 as building
 WORKDIR /container
 COPY package*.json ./
 RUN npm install
 COPY . .
 RUN npm run build
 
-FROM node:18.16.1
+FROM node:20.12.2
 
 WORKDIR /container
 COPY package.json ./

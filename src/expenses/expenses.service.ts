@@ -59,9 +59,10 @@ export class ExpensesService {
 
       expenses.push({
         ...expense,
-        description: `${expense.description} ${index + 1} de ${numberOfMovements}`,
         operationDate: newDate.toISO(),
         amount: auxAmount,
+        numberOfMovement: index + 1,
+        totalOfMovements: numberOfMovements,
       });
 
       operations.push({
@@ -96,6 +97,8 @@ export class ExpensesService {
           category: true,
           operationDate: true,
           createdBy: true,
+          numberOfMovement: true,
+          totalOfMovements: true,
           month: {
             $month: '$operationDate',
           },
